@@ -1,36 +1,40 @@
-# Project Implementation Plan - Step 1
+## Step 1: 建立專案
+1. 使用 vite 建立 vue.js + typescript 專案
+2. CSS 使用 tailwindcss v4
+3. 使用 vue-router 建立路由
+4. 使用 pinia 建立狀態管理
 
-## Overview
-This plan outlines the implementation of Step 1 from the TODO list, which involves setting up a Vue.js project with TypeScript using Vite, along with additional tooling.
+## Step 2: 建立頁面
 
-```mermaid
-graph TD
-    A[Start Project Setup] --> B[Create Vite Project]
-    B --> C[Install Dependencies]
-    C --> D[Configure TailwindCSS]
-    C --> E[Setup Vue Router]
-    C --> F[Setup Pinia Store]
-    D & E & F --> G[Project Structure Ready]
-```
+1. 建立首頁 `src/pages/Home.vue`
+2. layout 請參考 ![Layout](./layout.png)
+3. 首頁包含以下區塊
+   - 標題列
+   - 主要內容區域
+   - 側邊欄 - 頁面左側
+   - 頁尾
+  
+## Step 3: 標題列
 
-## Detailed Steps
+1. 使用 router name 顯示當前路由名稱
 
-### 1. Create Vue.js + TypeScript project using Vite
-- Use command: `npm create vite@latest`
-- Select Vue + TypeScript template
-- Initialize project and install base dependencies
+## Step 4: 側邊欄
 
-### 2. Install and Configure TailwindCSS v4
-- Install required packages
-- Create and configure tailwind.config.js
-- Set up CSS imports
+1. 使用陣列儲存各個 routes 資訊，並使用 v-for 迴圈顯示，route 資訊如下:
+  ```ts
+  const routes = [
+    { name: '首頁', path: '/' },
+    { name: '請假', path: '/leave' },
+  ]
+  ```
+2. routes 陣列在側邊欄來顯示各個 router link
 
-### 3. Setup Vue Router
-- Install vue-router
-- Create router configuration
-- Set up base route structure
+## Step 5: 主要內容區域 page
 
-### 4. Setup Pinia
-- Install pinia
-- Configure pinia store
-- Create base store structure
+1. 建立請假 page `src/pages/Leave.vue`
+2. 請假 page 需要以下欄位
+  - 姓名 - input
+  - 時間 datetime picker
+  - 假別 - select (特休、病假、事假、公假)
+  - 事由 - textarea
+  - 代理人 - input
