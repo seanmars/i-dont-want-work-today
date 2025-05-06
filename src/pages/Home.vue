@@ -1,11 +1,16 @@
 <template>
-  <div>
-    <h1>Home Page</h1>
-  </div>
+  <div></div>
 </template>
 
-<script lang="ts" setup>
-// Home page implementation will be added in Step 2
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+onMounted(() => {
+  const router = useRouter();
+
+  router.push({ name: 'leave' });
+});
 </script>
 
 <style scoped>

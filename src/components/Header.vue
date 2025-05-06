@@ -5,18 +5,14 @@
 </template>
 
 <script lang="ts" setup>
-import {computed} from 'vue'
-import {useRoute} from 'vue-router'
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { constantRoutes } from '@/router';
 
-const route = useRoute()
-
-const routes = [
-  {name: '首頁', path: '/'},
-  {name: '請假', path: '/leave'},
-]
+const route = useRoute();
 
 const currentRouteName = computed(() => {
-  const currentRoute = routes.find(r => r.path === route.path)
-  return currentRoute?.name || route.name
-})
+  const currentRoute = constantRoutes.find(r => r.path === route.path);
+  return currentRoute?.title || route.name;
+});
 </script>

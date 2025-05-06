@@ -127,8 +127,14 @@
     </div>
 
     <!-- 輸出區域 -->
-    <div v-if="outputText" class="max-w-2xl mt-6 p-4 bg-gray-50 border border-gray-200 rounded-md">
-      <pre class="whitespace-pre-wrap">{{ outputText }}</pre>
+    <div class="max-w-2xl mt-6">
+      <textarea
+          id="outputText"
+          v-model="outputText"
+          rows="4"
+          class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+      ></textarea>
     </div>
   </div>
 </template>
@@ -213,6 +219,8 @@ const resetForm = () => {
     reason: '',
     agent: ''
   };
+
+  outputText.value = '';
 };
 
 const handleDurationTypeChange = (event: Event) => {
@@ -253,11 +261,21 @@ const handleDurationTypeChange = (event: Event) => {
 
 onMounted(() => {
   resetForm();
+
+  // focus on the first input field
+  const nameInput = document.getElementById('name') as HTMLInputElement;
+  if (nameInput) {
+    nameInput.focus();
+  }
 });
 </script>
 
 <style scoped>
 :deep(.dp__input) {
   @reference p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+#outputText {
+  height: 200px;
 }
 </style>
