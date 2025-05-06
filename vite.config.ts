@@ -12,8 +12,8 @@ export default defineConfig({
       '@': '/src',
     },
   },
-  base: "/i-dont-want-work-today/",
   build: {
     outDir: 'docs',
+    assetsDir: '',
   }
 });
