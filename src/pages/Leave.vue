@@ -1,6 +1,7 @@
 <template>
-  <div class="p-6">
-    <h1 class="text-2xl font-bold mb-6">請假申請</h1>
+  <div class="container p-4">
+    <!--    <h1 class="text-2xl font-bold mb-6">請假申請</h1>-->
+
     <div class="max-w-2xl space-y-6">
       <!-- 姓名 -->
       <div>
@@ -140,7 +141,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
