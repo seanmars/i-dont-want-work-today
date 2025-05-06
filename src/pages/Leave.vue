@@ -1,7 +1,7 @@
 <template>
   <div class="p-6">
     <h1 class="text-2xl font-bold mb-6">請假申請</h1>
-    <form @submit.prevent="handleSubmit" class="max-w-2xl space-y-6">
+    <div class="max-w-2xl space-y-6">
       <!-- 姓名 -->
       <div>
         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">姓名</label>
@@ -16,7 +16,23 @@
 
       <!-- 時間 -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">請假日期</label>
+        <div class="flex items-center gap-4 mb-1">
+          <label class="text-sm font-medium text-gray-700">請假日期</label>
+          <div class="flex items-center gap-4" id="durationType" @change="handleDurationTypeChange">
+            <label class="inline-flex items-center">
+              <input type="radio" v-model="form.durationType" value="am" class="text-blue-600">
+              <span class="ml-2 text-sm text-gray-700">上午</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="radio" v-model="form.durationType" value="pm" class="text-blue-600">
+              <span class="ml-2 text-sm text-gray-700">下午</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="radio" v-model="form.durationType" value="full" class="text-blue-600">
+              <span class="ml-2 text-sm text-gray-700">整天</span>
+            </label>
+          </div>
+        </div>
         <VueDatePicker
             v-model="form.startTime"
             :format="dtFormat"
@@ -78,12 +94,7 @@
 
       <!-- 按鈕組 -->
       <div class="flex gap-4">
-        <button
-            type="submit"
-            class="p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          提交申請
-        </button>
+        <div class="flex-1"></div>
         <button
             type="button"
             @click="resetForm"
@@ -91,8 +102,30 @@
         >
           重置表單
         </button>
+
+        <button
+            type="button"
+            @click="copyToClipboard"
+            class="p-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+        >
+          複製到剪貼簿
+        </button>
+
+        <button
+            type="button"
+            @click="handleSubmit"
+            class="p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          提交申請
+        </button>
+        <div class="flex-1"></div>
       </div>
-    </form>
+    </div>
+
+    <!-- 輸出區域 -->
+    <div v-if="outputText" class="max-w-2xl mt-6 p-4 bg-gray-50 border border-gray-200 rounded-md">
+      <pre class="whitespace-pre-wrap">{{ outputText }}</pre>
+    </div>
   </div>
 </template>
 
@@ -101,10 +134,24 @@ import { onMounted, ref } from 'vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
+const outputText = ref('');
+
+const formatDateTime = (date: Date) => {
+  return date.toLocaleString('zh-TW', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+};
+
 interface LeaveForm {
   name: string;
   startTime: Date | null;
   endTime: Date | null;
+  durationType: 'am' | 'pm' | 'full';
   leaveType: string;
   reason: string;
   agent: string;
@@ -114,6 +161,7 @@ const form = ref<LeaveForm>({
   name: '',
   startTime: null,
   endTime: null,
+  durationType: 'full',
   leaveType: '',
   reason: '',
   agent: ''
@@ -122,9 +170,28 @@ const form = ref<LeaveForm>({
 const leaveTypes = ['特休', '病假', '事假', '公假'];
 const dtFormat = 'yyyy-MM-dd HH:mm';
 
+const copyToClipboard = () => {
+  if (!outputText.value) {
+    return;
+  }
+
+  navigator.clipboard.writeText(outputText.value)
+      .then(() => {
+        // Copying the text was successful
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+};
+
 const handleSubmit = () => {
-  console.log('提交表單:', form.value);
-  // TODO: 實作表單提交邏輯
+  if (!form.value.startTime || !form.value.endTime) return;
+
+  outputText.value = `姓名：${form.value.name}\n` +
+      `時間：${formatDateTime(form.value.startTime)} ~ ${formatDateTime(form.value.endTime)}\n` +
+      `假別：${form.value.leaveType}\n` +
+      `事由：${form.value.reason}\n` +
+      `代理人：${form.value.agent}`;
 };
 
 const resetForm = () => {
@@ -137,10 +204,47 @@ const resetForm = () => {
     name: '',
     startTime: startTime,
     endTime: endTime,
+    durationType: 'full',
     leaveType: leaveTypes[0],
     reason: '',
     agent: ''
   };
+};
+
+const handleDurationTypeChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const val = target.value as 'am' | 'pm' | 'full';
+
+  if (!form.value.startTime) {
+    form.value.startTime = new Date();
+  }
+
+  if (!form.value.endTime) {
+    form.value.endTime = new Date();
+  }
+
+  switch (val) {
+    case 'am':
+      form.value.startTime = new Date(form.value.startTime!);
+      form.value.startTime!.setHours(9, 30, 0, 0);
+      form.value.endTime = new Date(form.value.endTime!);
+      form.value.endTime!.setHours(12, 0, 0, 0);
+      break;
+    case 'pm':
+      form.value.startTime = new Date(form.value.startTime!);
+      form.value.startTime!.setHours(12, 0, 0, 0);
+      form.value.endTime = new Date(form.value.endTime!);
+      form.value.endTime!.setHours(18, 0, 0, 0);
+      break;
+    case 'full':
+      form.value.startTime = new Date(form.value.startTime!);
+      form.value.startTime!.setHours(9, 30, 0, 0);
+      form.value.endTime = new Date(form.value.endTime!);
+      form.value.endTime!.setHours(18, 0, 0, 0);
+      break;
+    default:
+      break;
+  }
 };
 
 onMounted(() => {
