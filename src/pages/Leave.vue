@@ -267,10 +267,6 @@ onMounted(() => {
   // Get URL query parameters
   const route = useRoute();
   const { name: queryName, agent: queryAgent } = route.query;
-
-  console.log('queryName:', queryName);
-  console.log('queryAgent:', queryAgent);
-  
   
   // Update form if query parameters exist
   if (queryName) {
