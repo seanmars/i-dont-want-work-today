@@ -144,6 +144,7 @@
 import {onMounted, ref} from 'vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
+import { useRoute } from 'vue-router';
 
 const outputText = ref('');
 
@@ -262,6 +263,22 @@ const handleDurationTypeChange = (event: Event) => {
 
 onMounted(() => {
   resetForm();
+
+  // Get URL query parameters
+  const route = useRoute();
+  const { name: queryName, agent: queryAgent } = route.query;
+
+  console.log('queryName:', queryName);
+  console.log('queryAgent:', queryAgent);
+  
+  
+  // Update form if query parameters exist
+  if (queryName) {
+    form.value.name = queryName as string;
+  }
+  if (queryAgent) {
+    form.value.agent = queryAgent as string;
+  }
 
   // focus on the first input field
   const nameInput = document.getElementById('name') as HTMLInputElement;
