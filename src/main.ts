@@ -1,15 +1,14 @@
-import { createApp } from 'vue';
-import { createPinia } from 'pinia';
-import router from './router';
-import App from './App.vue';
-import './style.css';
+import './assets/main.css'
 
-const app = createApp(App);
-const pinia = createPinia();
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 
-app.use(router);
-app.use(pinia);
+import App from './App.vue'
+import router from './router'
 
-app.mount('#app');
+const app = createApp(App)
 
-console.log('May the Force be with you!');
+app.use(createPinia())
+app.use(router)
+
+app.mount('#app')

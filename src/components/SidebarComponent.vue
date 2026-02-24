@@ -4,9 +4,9 @@
       <ul class="space-y-2">
         <li v-for="route in constantRoutes" :key="route.path">
           <router-link
-              :to="route.path"
-              class="block p-2 rounded hover:bg-gray-200 transition-colors"
-              :class="{ 'bg-gray-200': isCurrentRoute(route.path) }"
+            :to="route.path"
+            class="block p-2 rounded hover:bg-gray-200 transition-colors"
+            :class="{ 'bg-gray-200': isCurrentRoute(route.path) }"
           >
             {{ route.title }}
           </router-link>
@@ -17,12 +17,12 @@
 </template>
 
 <script lang="ts" setup>
-import { useRoute } from 'vue-router';
-import { constantRoutes } from '@/router';
+import { useRoute } from 'vue-router'
+import { constantRoutes } from '@/router'
 
-const route = useRoute();
+const route = useRoute()
 
 const isCurrentRoute = (path: string) => {
-  return route.path === path;
-};
+  return route.path === path
+}
 </script>

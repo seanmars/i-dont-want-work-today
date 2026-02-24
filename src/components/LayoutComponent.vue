@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import Header from './Header.vue';
-import Sidebar from './Sidebar.vue';
-import Footer from './Footer.vue';
+import Header from './HeaderComponent.vue'
+import Sidebar from './SidebarComponent.vue'
+import Footer from './FooterComponent.vue'
 </script>
