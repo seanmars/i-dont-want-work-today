@@ -32,13 +32,17 @@
               <input type="radio" v-model="form.durationType" value="full" class="text-blue-600" />
               <span class="ml-2 text-sm text-gray-700">整天</span>
             </label>
+            <label class="inline-flex items-center">
+              <input type="radio" v-model="form.durationType" value="comp" class="text-blue-600" />
+              <span class="ml-2 text-sm text-gray-700">補休</span>
+            </label>
           </div>
         </div>
         <VueDatePicker
           v-model="form.startTime"
-          :format="dtFormat"
+          :formats="{ input: 'yyyy-MM-dd HH:mm' }"
           :locale="zhTW"
-          :enable-time-picker="false"
+          :time-config="{ enableTimePicker: form.durationType === 'comp' }"
           auto-apply
           class="w-full"
           required
@@ -46,9 +50,9 @@
         <span class="text-sm text-gray-500">至</span>
         <VueDatePicker
           v-model="form.endTime"
-          :format="dtFormat"
+          :formats="{ input: 'yyyy-MM-dd HH:mm' }"
           :locale="zhTW"
-          :enable-time-picker="false"
+          :time-config="{ enableTimePicker: form.durationType === 'comp' }"
           auto-apply
           class="w-full"
           required
@@ -164,7 +168,7 @@ interface LeaveForm {
   name: string
   startTime: Date | null
   endTime: Date | null
-  durationType: 'am' | 'pm' | 'full'
+  durationType: 'am' | 'pm' | 'full' | 'comp'
   leaveType: string
   reason: string
   agent: string
@@ -180,7 +184,7 @@ const form = ref<LeaveForm>({
   agent: '',
 })
 
-const leaveTypes = ['特休', '病假', '事假', '公假']
+const leaveTypes = ['特休', '病假', '事假', '公假', '補休']
 const dtFormat = 'yyyy-MM-dd HH:mm'
 
 const copyToClipboard = () => {
@@ -230,7 +234,7 @@ const resetForm = () => {
 
 const handleDurationTypeChange = (event: Event) => {
   const target = event.target as HTMLInputElement
-  const val = target.value as 'am' | 'pm' | 'full'
+  const val = target.value as 'am' | 'pm' | 'full' | 'comp'
 
   if (!form.value.startTime) {
     form.value.startTime = new Date()
@@ -258,6 +262,13 @@ const handleDurationTypeChange = (event: Event) => {
       form.value.startTime!.setHours(9, 30, 0, 0)
       form.value.endTime = new Date(form.value.endTime!)
       form.value.endTime!.setHours(18, 0, 0, 0)
+      break
+    case 'comp':
+      form.value.startTime = new Date(form.value.startTime!)
+      form.value.startTime!.setHours(9, 30, 0, 0)
+      form.value.endTime = new Date(form.value.endTime!)
+      form.value.endTime!.setHours(18, 0, 0, 0)
+      form.value.leaveType = '補休'
       break
     default:
       break
