@@ -20,6 +20,12 @@ export const constantRoutes = [
     path: '/bit-tool',
     component: () => import('../views/BitToolView.vue'),
   },
+  {
+    title: 'Deep Link Tester',
+    name: 'deep-link-tester',
+    path: '/deep-link-tester',
+    component: () => import('../views/DeepLinkTesterView.vue'),
+  },
 ]
 
 const routes = [
