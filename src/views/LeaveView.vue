@@ -40,7 +40,7 @@
         </div>
         <VueDatePicker
           v-model="form.startTime"
-          :formats="{ input: 'yyyy-MM-dd HH:mm' }"
+          :formats="{ input: dtFormat }"
           :locale="zhTW"
           :time-config="{ enableTimePicker: form.durationType === 'comp' }"
           auto-apply
@@ -50,7 +50,7 @@
         <span class="text-sm text-gray-500">至</span>
         <VueDatePicker
           v-model="form.endTime"
-          :formats="{ input: 'yyyy-MM-dd HH:mm' }"
+          :formats="{ input: dtFormat }"
           :locale="zhTW"
           :time-config="{ enableTimePicker: form.durationType === 'comp' }"
           auto-apply
