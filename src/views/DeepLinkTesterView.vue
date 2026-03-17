@@ -38,10 +38,18 @@
       <div class="flex items-center gap-4">
         <div class="w-24"></div>
         <button
+          id="btnParse"
           @click="testDeepLink"
           class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
         >
-          測試
+          解析
+        </button>
+        <button
+          id="btnTest"
+          @click="openDeepLink"
+          class="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+        >
+          開啟
         </button>
       </div>
     </div>
@@ -135,6 +143,22 @@ interface InvalidResult {
 }
 
 const result = ref<ValidResult | InvalidResult | null>(null)
+
+function openDeepLink() {
+  schemaError.value = ''
+
+  if (!schema.value.trim()) {
+    schemaError.value = 'Schema 不可為空'
+    return
+  }
+  if (/\s/.test(schema.value) || schema.value.includes('://')) {
+    schemaError.value = 'Schema 不可包含空白或 "://"'
+    return
+  }
+
+  const fullUrl = `${schema.value}://${urlPath.value}`
+  window.open(fullUrl, '_blank')
+}
 
 function testDeepLink() {
   schemaError.value = ''
