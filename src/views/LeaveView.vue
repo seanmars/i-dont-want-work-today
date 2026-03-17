@@ -2,7 +2,7 @@
   <div class="container p-4">
     <!--    <h1 class="text-2xl font-bold mb-6">請假申請</h1>-->
 
-    <div class="max-w-2xl space-y-6">
+    <div class="max-w-2xl flex flex-col gap-6">
       <!-- 姓名 -->
       <div>
         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">姓名</label>

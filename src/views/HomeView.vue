@@ -12,6 +12,12 @@
     >
       Bit Tool
     </router-link>
+    <router-link
+      to="/deep-link-tester"
+      class="p-4 bg-blue-500 text-white rounded hover:bg-blue-600 text-center"
+    >
+      Deeplink Tester
+    </router-link>
   </div>
 </template>
 

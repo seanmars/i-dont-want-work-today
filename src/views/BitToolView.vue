@@ -4,7 +4,7 @@
     <!--    <h1 class="text-3xl font-bold mb-8">Bit Tool</h1>-->
 
     <!-- 輸入區域 -->
-    <div class="max-w-md space-y-4">
+    <div class="max-w-md flex flex-col gap-4">
       <div class="flex items-center gap-4">
         <label for="input1" class="w-24 text-gray-600 font-medium">ID</label>
         <input

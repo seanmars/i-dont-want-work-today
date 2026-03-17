@@ -1,7 +1,7 @@
 <template>
-  <div class="container p-4">
+  <div class="container p-4 flex flex-col gap-8">
     <!-- 輸入區域 -->
-    <div class="max-w-lg space-y-4">
+    <div class="max-w-lg flex flex-col gap-4">
       <div class="flex items-center gap-4">
         <label for="schema-input" class="w-24 text-gray-600 font-medium shrink-0">Schema</label>
         <div class="flex-1 flex items-center border rounded focus-within:border-blue-500">
@@ -26,7 +26,7 @@
           id="url-input"
           type="text"
           v-model="urlPath"
-          placeholder="/home?id=123&name=abc#section1"
+          placeholder="home?id=123&name=abc#section1"
           aria-label="URL Path"
           class="flex-1 p-2 border rounded focus:outline-none focus:border-blue-500"
           @keyup.enter="testDeepLink"
@@ -47,28 +47,26 @@
     </div>
 
     <!-- 結果區域 -->
-    <div v-if="result" class="max-w-lg mt-8">
+    <div v-if="result" class="max-w-lg">
       <!-- 有效結果 -->
-      <div v-if="result.valid" class="border rounded p-4 space-y-3">
+      <div v-if="result.valid" class="border rounded p-4 flex flex-col gap-3">
         <h2 class="text-green-600 font-semibold text-lg">解析成功</h2>
 
-        <div class="space-y-2 text-sm">
-          <div class="flex gap-2">
-            <span class="w-28 text-gray-500 shrink-0">完整 URL</span>
-            <code class="text-gray-800 break-all">{{ result.fullUrl }}</code>
-          </div>
-          <div class="flex gap-2">
-            <span class="w-28 text-gray-500 shrink-0">Schema</span>
-            <code class="text-gray-800">{{ result.schema }}</code>
-          </div>
-          <div class="flex gap-2">
-            <span class="w-28 text-gray-500 shrink-0">Path</span>
-            <code class="text-gray-800">{{ result.pathname }}</code>
-          </div>
-          <div class="flex gap-2">
-            <span class="w-28 text-gray-500 shrink-0">Fragment</span>
-            <code class="text-gray-800">{{ result.fragment ?? 'null' }}</code>
-          </div>
+        <div class="grid text-sm gap-y-3" style="grid-template-columns: 7rem 1fr">
+          <span class="text-gray-500">完整 URL</span>
+          <code class="text-gray-800 break-all">{{ result.fullUrl }}</code>
+
+          <span class="text-gray-500">Schema</span>
+          <code class="text-gray-800">{{ result.schema }}</code>
+
+          <span class="text-gray-500">Host</span>
+          <code class="text-gray-800">{{ result.host }}</code>
+
+          <span class="text-gray-500">Path</span>
+          <code class="text-gray-800">{{ result.pathname }}</code>
+
+          <span class="text-gray-500">Fragment</span>
+          <code class="text-gray-800">{{ result.fragment ?? 'null' }}</code>
         </div>
 
         <!-- Query Params -->
@@ -102,7 +100,7 @@
       </div>
 
       <!-- 無效結果 -->
-      <div v-else class="border border-red-200 rounded p-4 space-y-2 bg-red-50">
+      <div v-else class="border border-red-200 rounded p-4 flex flex-col gap-2 bg-red-50">
         <h2 class="text-red-600 font-semibold text-lg">解析失敗</h2>
         <div class="text-sm text-red-700">{{ result.error }}</div>
         <div class="text-sm text-gray-500">
@@ -116,14 +114,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const schema = ref('')
-const urlPath = ref('')
+const schema = ref('myapp')
+const urlPath = ref('item/id/42?source=shop&kind=2#detial')
 const schemaError = ref('')
 
 interface ValidResult {
   valid: true
   fullUrl: string
   schema: string
+  host: string
   pathname: string
   queryParams: Record<string, string>
   fragment: string | null
@@ -150,8 +149,8 @@ function testDeepLink() {
     return
   }
 
-  const path = urlPath.value.startsWith('/') ? urlPath.value : `/${urlPath.value}`
-  const fullUrl = `${schema.value}://${path}`
+  const path = urlPath.value;
+  const fullUrl = `${schema.value}://${path}`;
 
   try {
     const parsed = new URL(fullUrl)
@@ -159,6 +158,7 @@ function testDeepLink() {
       valid: true,
       fullUrl,
       schema: parsed.protocol.replace(':', ''),
+      host: parsed.host,
       pathname: parsed.pathname,
       queryParams: Object.fromEntries(parsed.searchParams),
       fragment: parsed.hash.replace('#', '') || null,
