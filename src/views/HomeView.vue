@@ -1,32 +1,21 @@
 <template>
-  <div class="flex flex-col gap-4 p-4 max-w-md mx-auto">
-    <router-link
-      to="/leave"
-      class="p-4 bg-blue-500 text-white rounded hover:bg-blue-600 text-center"
-    >
-      請假申請
-    </router-link>
-    <router-link
-      to="/bit-tool"
-      class="p-4 bg-blue-500 text-white rounded hover:bg-blue-600 text-center"
-    >
-      Bit Tool
-    </router-link>
-    <router-link
-      to="/deep-link-tester"
-      class="p-4 bg-blue-500 text-white rounded hover:bg-blue-600 text-center"
-    >
-      Deeplink Tester
-    </router-link>
-  </div>
+  <ul class="max-w-2xl divide-y divide-line border-y border-line">
+    <li v-for="tool in tools" :key="tool.path">
+      <router-link
+        :to="tool.path"
+        class="highlight-trigger flex flex-col gap-1 rounded-sm py-5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-mat"
+      >
+        <span class="text-lg font-semibold text-ink">
+          <span class="highlight">{{ tool.title }}</span>
+        </span>
+        <span class="text-mute">{{ tool.description }}</span>
+      </router-link>
+    </li>
+  </ul>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { constantRoutes } from '@/router'
 
-onMounted(() => {
-  //
-})
+const tools = constantRoutes.filter((r) => r.path !== '/')
 </script>
-
-<style scoped></style>

@@ -1,106 +1,94 @@
 <template>
-  <div class="container p-4 flex flex-col gap-8">
+  <div class="flex max-w-xl flex-col gap-8">
     <!-- 輸入區域 -->
-    <div class="max-w-lg flex flex-col gap-4">
-      <div class="flex items-center gap-4">
-        <label for="schema-input" class="w-24 text-gray-600 font-medium shrink-0">Schema</label>
-        <div class="flex-1 flex items-center border rounded focus-within:border-blue-500">
-          <input
-            id="schema-input"
-            type="text"
-            v-model="schema"
-            placeholder="myapp"
-            aria-label="Schema"
-            class="flex-1 p-2 rounded-l focus:outline-none"
-            @keyup.enter="testDeepLink"
-          />
-          <span class="px-2 text-gray-400 select-none bg-gray-50 border-l rounded-r py-2 text-sm"
-            >://</span
-          >
-        </div>
-      </div>
-
-      <div class="flex items-center gap-4">
-        <label for="url-input" class="w-24 text-gray-600 font-medium shrink-0">URL Path</label>
+    <div class="grid gap-x-4 gap-y-3 sm:grid-cols-[6.5rem_1fr] sm:items-center">
+      <label for="schema-input" class="text-sm font-medium">Schema</label>
+      <div class="field-group">
         <input
-          id="url-input"
+          id="schema-input"
           type="text"
-          v-model="urlPath"
-          placeholder="home?id=123&name=abc#section1"
-          aria-label="URL Path"
-          class="flex-1 p-2 border rounded focus:outline-none focus:border-blue-500"
+          v-model="schema"
+          placeholder="myapp"
+          aria-label="Schema"
+          class="min-w-0 flex-1 rounded-l-md px-3 py-2 font-mono text-[0.9375rem] focus:outline-none"
           @keyup.enter="testDeepLink"
         />
+        <span
+          class="flex items-center rounded-r-md border-l border-line bg-paper-deep px-3 font-mono text-sm text-mute select-none"
+          >://</span
+        >
       </div>
 
-      <div v-if="schemaError" class="ml-28 text-sm text-red-500">{{ schemaError }}</div>
+      <label for="url-input" class="text-sm font-medium">URL Path</label>
+      <input
+        id="url-input"
+        type="text"
+        v-model="urlPath"
+        placeholder="home?id=123&name=abc#section1"
+        aria-label="URL Path"
+        class="field font-mono text-[0.9375rem]"
+        @keyup.enter="testDeepLink"
+      />
 
-      <div class="flex items-center gap-4">
-        <div class="w-24"></div>
-        <button
-          id="btnParse"
-          @click="testDeepLink"
-          class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        >
+      <p v-if="schemaError" role="alert" class="text-sm text-err sm:col-start-2">
+        {{ schemaError }}
+      </p>
+
+      <div class="mt-2 flex gap-3 sm:col-start-2">
+        <button id="btnParse" type="button" @click="testDeepLink" class="btn btn-primary">
           解析
         </button>
-        <button
-          id="btnTest"
-          @click="openDeepLink"
-          class="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-        >
+        <button id="btnTest" type="button" @click="openDeepLink" class="btn btn-secondary">
           開啟
         </button>
       </div>
     </div>
 
     <!-- 結果區域 -->
-    <div v-if="result" class="max-w-lg">
+    <section v-if="result" aria-live="polite">
       <!-- 有效結果 -->
-      <div v-if="result.valid" class="border rounded p-4 flex flex-col gap-3">
-        <h2 class="text-green-600 font-semibold text-lg">解析成功</h2>
+      <div v-if="result.valid" class="panel">
+        <h2 class="flex items-center gap-2 border-b border-line px-5 py-3 font-semibold">
+          <span class="size-2 rounded-full bg-ok" aria-hidden="true"></span>
+          解析成功
+        </h2>
 
-        <div class="grid text-sm gap-y-3" style="grid-template-columns: 7rem 1fr">
-          <span class="text-gray-500">完整 URL</span>
-          <code class="text-gray-800 break-all">{{ result.fullUrl }}</code>
+        <dl class="grid grid-cols-[6.5rem_1fr] gap-x-4 gap-y-2.5 px-5 py-4 text-sm">
+          <dt class="text-mute">完整 URL</dt>
+          <dd class="font-mono break-all">{{ result.fullUrl }}</dd>
 
-          <span class="text-gray-500">Schema</span>
-          <code class="text-gray-800">{{ result.schema }}</code>
+          <dt class="text-mute">Schema</dt>
+          <dd class="font-mono">{{ result.schema }}</dd>
 
-          <span class="text-gray-500">Host</span>
-          <code class="text-gray-800">{{ result.host }}</code>
+          <dt class="text-mute">Host</dt>
+          <dd class="font-mono">{{ result.host }}</dd>
 
-          <span class="text-gray-500">Path</span>
-          <code class="text-gray-800">{{ result.pathname }}</code>
+          <dt class="text-mute">Path</dt>
+          <dd class="font-mono break-all">{{ result.pathname }}</dd>
 
-          <span class="text-gray-500">Fragment</span>
-          <code class="text-gray-800">{{ result.fragment ?? 'null' }}</code>
-        </div>
+          <dt class="text-mute">Fragment</dt>
+          <dd class="font-mono" :class="{ 'text-mute': result.fragment === null }">
+            {{ result.fragment ?? 'null' }}
+          </dd>
+        </dl>
 
         <!-- Query Params -->
-        <div class="mt-2">
-          <div class="text-gray-500 text-sm mb-1">Query Params</div>
-          <div
-            v-if="Object.keys(result.queryParams).length === 0"
-            class="text-sm text-gray-400 italic"
-          >
-            （無）
-          </div>
-          <table v-else class="w-full text-sm border-collapse">
+        <div class="border-t border-line px-5 py-4">
+          <h3 class="mb-2 text-sm text-mute">Query Params</h3>
+          <p v-if="Object.keys(result.queryParams).length === 0" class="text-sm text-mute">
+            沒有 query 參數.
+          </p>
+          <table v-else class="w-full border-collapse text-sm">
             <thead>
-              <tr class="bg-gray-50">
-                <th class="text-left p-2 border text-gray-600 font-medium">Key</th>
-                <th class="text-left p-2 border text-gray-600 font-medium">Value</th>
+              <tr class="text-left text-mute">
+                <th class="border-b border-line py-1.5 pr-4 font-medium">Key</th>
+                <th class="border-b border-line py-1.5 font-medium">Value</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="font-mono">
               <tr v-for="(val, key) in result.queryParams" :key="key">
-                <td class="p-2 border">
-                  <code>{{ key }}</code>
-                </td>
-                <td class="p-2 border">
-                  <code>{{ val }}</code>
-                </td>
+                <td class="border-b border-line/60 py-1.5 pr-4 align-top">{{ key }}</td>
+                <td class="border-b border-line/60 py-1.5 break-all">{{ val }}</td>
               </tr>
             </tbody>
           </table>
@@ -108,14 +96,14 @@
       </div>
 
       <!-- 無效結果 -->
-      <div v-else class="border border-red-200 rounded p-4 flex flex-col gap-2 bg-red-50">
-        <h2 class="text-red-600 font-semibold text-lg">解析失敗</h2>
-        <div class="text-sm text-red-700">{{ result.error }}</div>
-        <div class="text-sm text-gray-500">
-          嘗試解析的 URL：<code class="text-gray-700">{{ result.fullUrl }}</code>
-        </div>
+      <div v-else class="panel border-err/30 bg-err-soft px-5 py-4">
+        <h2 class="font-semibold text-err">解析失敗</h2>
+        <p class="mt-1 text-sm text-err">{{ result.error }}</p>
+        <p class="mt-3 text-sm text-mute">
+          輸入的 URL: <code class="font-mono break-all text-ink">{{ result.fullUrl }}</code>
+        </p>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 

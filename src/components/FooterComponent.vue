@@ -1,7 +1,7 @@
 <script lang="ts" setup></script>
 
 <template>
-  <footer class="col-span-2 bg-gray-200 p-4 text-center shadow-md">
+  <footer class="px-6 py-5 text-xs text-mat-text/70">
     <p>&copy; 2025 MTFBWY</p>
   </footer>
 </template>

@@ -1,71 +1,67 @@
 <template>
-  <div class="container p-4">
-    <!-- 標題 -->
-    <!--    <h1 class="text-3xl font-bold mb-8">Bit Tool</h1>-->
-
+  <div class="max-w-md">
     <!-- 輸入區域 -->
-    <div class="max-w-md flex flex-col gap-4">
-      <div class="flex items-center gap-4">
-        <label for="input1" class="w-24 text-gray-600 font-medium">ID</label>
-        <input
-          id="input1"
-          type="number"
-          v-model="inputId"
-          min="0"
-          aria-label="ID"
-          class="flex-1 p-2 border rounded focus:outline-none focus:border-blue-500"
-        />
-      </div>
+    <div class="grid grid-cols-[6.5rem_1fr] items-center gap-x-4 gap-y-3">
+      <label for="input1" class="text-sm font-medium">ID</label>
+      <input
+        id="input1"
+        type="number"
+        v-model="inputId"
+        min="0"
+        aria-label="ID"
+        class="field font-mono"
+      />
 
-      <div class="flex items-center gap-4">
-        <label for="input2" class="w-24 text-gray-600 font-medium">Byte Index</label>
-        <input
-          id="input2"
-          type="number"
-          v-model="inputByteIndex"
-          min="0"
-          aria-label="Byte Index"
-          class="flex-1 p-2 border rounded focus:outline-none focus:border-blue-500"
-        />
-      </div>
+      <label for="input2" class="text-sm font-medium">Byte Index</label>
+      <input
+        id="input2"
+        type="number"
+        v-model="inputByteIndex"
+        min="0"
+        aria-label="Byte Index"
+        class="field font-mono"
+      />
 
-      <div class="flex items-center gap-4">
-        <label for="input3" class="w-24 text-gray-600 font-medium">Bit Position</label>
-        <input
-          id="input3"
-          type="number"
-          class="flex-1 p-2 border rounded focus:outline-none focus:border-blue-500"
-          ref="inputBitPositionRef"
-        />
-      </div>
+      <label for="input3" class="text-sm font-medium">Bit Position</label>
+      <input id="input3" type="number" class="field font-mono" ref="inputBitPositionRef" />
     </div>
 
-    <!-- 位元顯示區域 -->
-    <div class="max-w-md mt-8 space-y-2">
-      <!-- 位元索引顯示 -->
-      <div class="grid grid-cols-8 gap-2">
-        <div v-for="n in 8" :key="n" class="text-center text-sm text-gray-500">
-          {{ 8 - n }}
+    <!-- 位元顯示區域: DIP switch, 點一下切換 bit position -->
+    <section class="mt-10" aria-label="位元狀態">
+      <div class="rounded-[10px] bg-mat p-3 pb-2 shadow-[inset_0_1px_0_rgb(255_255_255/0.06)]">
+        <div class="grid grid-cols-8 gap-2">
+          <button
+            v-for="n in 8"
+            :key="n"
+            type="button"
+            class="dip"
+            :class="{ 'is-on': bits[n - 1] === 1 }"
+            :aria-pressed="bits[n - 1] === 1"
+            :aria-label="`Bit ${8 - n}`"
+            @click="handleBitPositionUpdate(8 - n)"
+          >
+            <span class="dip-lever"></span>
+          </button>
+        </div>
+        <div class="mt-1.5 grid grid-cols-8 gap-2 text-center font-mono text-xs text-mat-text">
+          <span v-for="n in 8" :key="n">{{ 8 - n }}</span>
         </div>
       </div>
-      <div class="grid grid-cols-8 gap-2">
-        <div
-          v-for="n in 8"
-          :key="n"
-          :class="[
-            'aspect-square border rounded flex items-center justify-center text-lg font-medium cursor-pointer transition-colors',
-            bits[n - 1] ? 'bg-blue-100 text-blue-600' : 'bg-gray-50',
-          ]"
-        >
-          {{ bits[n - 1] }}
-        </div>
-      </div>
-    </div>
+
+      <dl class="mt-4 grid grid-cols-[6.5rem_1fr] gap-x-4 gap-y-1 text-sm">
+        <dt class="text-mute">Binary</dt>
+        <dd class="font-mono">0b{{ bits.join('') }}</dd>
+        <dt class="text-mute">Hex</dt>
+        <dd class="font-mono">0x{{ maskHex }}</dd>
+        <dt class="text-mute">Decimal</dt>
+        <dd class="font-mono">{{ maskValue }}</dd>
+      </dl>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 const inputId = ref('0')
 const inputByteIndex = ref('0')
@@ -165,6 +161,10 @@ watch(inputByteIndex, (value) => {
 
 const bits = ref(Array(8).fill(0))
 
+// 目前 bit 對應的 mask, 例如 bit 3 => 0b00001000 / 0x08
+const maskValue = computed(() => parseInt(bits.value.join(''), 2))
+const maskHex = computed(() => maskValue.value.toString(16).toUpperCase().padStart(2, '0'))
+
 const handleBitPositionUpdate = (value: number) => {
   value = isNaN(value) ? 0 : value
   value %= 8
@@ -229,5 +229,50 @@ input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* DIP switch: 槽 + 撥桿. 撥桿在下方為 0, 推到上方為 1. */
+.dip {
+  position: relative;
+  height: 4.5rem;
+  border-radius: 4px;
+  background: var(--color-mat-deep);
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.4);
+  cursor: pointer;
+}
+
+.dip:focus-visible {
+  outline: 2px solid var(--color-mark);
+  outline-offset: 2px;
+}
+
+.dip-lever {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  left: 4px;
+  height: calc(50% - 4px);
+  border-radius: 3px;
+  background: #dfe7e1;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.6),
+    0 2px 2px rgb(0 0 0 / 0.35);
+  transition:
+    transform 160ms cubic-bezier(0.3, 0.7, 0.4, 1),
+    background-color 160ms;
+}
+
+.dip:hover:not(.is-on) .dip-lever {
+  background: #f2f6f3;
+}
+
+.dip.is-on .dip-lever {
+  transform: translateY(-100%);
+  background: var(--color-mark);
 }
 </style>

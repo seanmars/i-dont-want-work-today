@@ -1,16 +1,16 @@
 <template>
-  <div class="min-h-screen grid grid-cols-[250px_1fr] grid-rows-[auto_1fr_auto]">
-    <Header />
+  <div class="min-h-screen md:grid md:grid-cols-[15rem_1fr]">
     <Sidebar />
-    <main class="p-6">
-      <router-view></router-view>
-    </main>
-    <Footer />
+    <div class="flex min-w-0 flex-col">
+      <Header />
+      <main class="flex-1 px-5 pb-16 md:px-10">
+        <router-view></router-view>
+      </main>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import Header from './HeaderComponent.vue'
 import Sidebar from './SidebarComponent.vue'
-import Footer from './FooterComponent.vue'
 </script>
