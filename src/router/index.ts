@@ -30,6 +30,13 @@ export const constantRoutes = [
     path: '/deep-link-tester',
     component: () => import('../views/DeepLinkTesterView.vue'),
   },
+  {
+    title: '英文單字練習',
+    description: '分組整理英文單字, 自動翻譯成中文, 點一下就能聽發音.',
+    name: 'vocabulary',
+    path: '/vocabulary',
+    component: () => import('../views/VocabularyView.vue'),
+  },
 ]
 
 const routes = [

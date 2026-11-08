@@ -99,6 +99,34 @@
     background: var(--color-paper-deep);
   }
 
+  /* 清單列上的次要操作, 例如 編輯, 刪除 */
+  .btn-text {
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    color: var(--color-mute);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    cursor: pointer;
+    transition:
+      background-color 120ms,
+      color 120ms;
+  }
+
+  .btn-text:hover:not(:disabled) {
+    background: var(--color-paper-deep);
+    color: var(--color-ink);
+  }
+
+  .btn-text:focus-visible {
+    outline: 2px solid var(--color-mat);
+    outline-offset: 2px;
+  }
+
+  .btn-text:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
   /* 結果與輸出區塊 */
   .panel {
     border: 1px solid var(--color-line);
